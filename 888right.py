@@ -1,22 +1,49 @@
 import os
+import sys
+
+url = "curl 'https://bbin-tw.pragmaticplay.net/gs2c/v3/gameService' -H 'Referer: https://bbin-tw.pragmaticplay.net/gs2c/html5Game.do?jackpotid=0&gname=888%20Dragons&extGame=1&ext=0&cb_target=exist_tab&symbol=vs1dragon8&jurisdictionID=99&mgckey=AUTHTOKEN@a30f2fab201014f5d2959481897f33d448d2e3899666240e0abf6463d830e404~stylename@bbin~SESSION@8164ea73-933d-4059-892c-c20faf983ea1&tabName=' -H 'Origin: https://bbin-tw.pragmaticplay.net' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36' -H 'Content-type: application/x-www-form-urlencoded' --data 'action=doSpin&symbol=vs1dragon8&c=1&l=1&index=2&counter=3&repeat=0&mgckey=AUTHTOKEN@a30f2fab201014f5d2959481897f33d448d2e3899666240e0abf6463d830e404~stylename@bbin~SESSION@8164ea73-933d-4059-892c-c20faf983ea1' --compressed"
+
 
 indexNumber = 3
 counter = 5
 
-url = "curl 'https://bbin-tw.pragmaticplay.net/gs2c/v3/gameService' -H 'origin: https://bbin-tw.pragmaticplay.net' -H 'accept-encoding: gzip, deflate, br' -H 'accept-language: zh-CN,zh;q=0.9,ko;q=0.8,zh-TW;q=0.7,en;q=0.6' -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36' -H 'content-type: application/x-www-form-urlencoded' -H 'accept: */*' -H 'referer: https://bbin-tw.pragmaticplay.net/gs2c/html5Game.do?jackpotid=0&gname=888%20Dragons&extGame=1&ext=0&cb_target=exist_tab&symbol=vs1dragon8&jurisdictionID=99&mgckey=AUTHTOKEN@94c3dec25c49286eacade486a29247d173c2b9c245a128c1e54ccf63e8a26e85~stylename@bbin~SESSION@010c91a8-b689-46c0-a26d-443722ceaa41&tabName=' -H 'authority: bbin-tw.pragmaticplay.net' -H 'cookie: _ga=GA1.3.782692004.1551164849; _gid=GA1.3.398648764.1551164849' --data 'action=doSpin&symbol=vs1dragon8&c=1&l=1&index=2&counter=3&repeat=0&mgckey=AUTHTOKEN@94c3dec25c49286eacade486a29247d173c2b9c245a128c1e54ccf63e8a26e85~stylename@bbin~SESSION@010c91a8-b689-46c0-a26d-443722ceaa41' --compressed"
-
 head = "curl" + url.split("curl")[1].split("--data")[0] + "--data "
 
-data = '\'action=doSpin&symbol=vs1dragon8&c=1&l=1&index=' + str(indexNumber) + '&counter=' + str(counter) + "&repeat=0" \
-      +  "&mgckey" + url.split("&mgckey")[-1]
+for i in range(100):
+      data = '\'action=doSpin&symbol=vs1dragon8&c=1&l=1&index=' + str(indexNumber) + '&counter=' + str(counter) + "&repeat=0" \
+            +  "&mgckey" + url.split("&mgckey")[-1]
+      sendUrl = head + data
+      result = os.popen(sendUrl).readlines()
+      print(result)
 
-print(head + data)
-print("\n\n")
-print(url)
-print('\n')
+      print(result[i].split("tw=")[1].split("&balance")[0])
+
+      if(float(result[i].split("tw=")[1].split("&balance")[0]) == 0):
+            print("没中奖")
+            indexNumber += 1
+            counter += 2
+      else:
+            print("中奖了")
+            indexNumber += 1
+            counter += 2
+            data = '\'symbol=vs1dragon8&action=doCollect&index=' + str(indexNumber) + '&counter=' + str(counter) + "&repeat=0" \
+            +  "&mgckey" + url.split("&mgckey")[-1]
+            sendUrl = head + data
+            result = os.popen(sendUrl).readlines()
+            print(result)
+            indexNumber += 1
+            counter += 2
+
+
+
+
+# print(head + data)
+# print("\n\n")
+# print(url)
+# print('\n')
 
 if url == head + data :
       print("hhh")
 
-result = os.popen(head + data).readlines()
-print(result)
+# result = os.popen(head + data).readlines()
+# print(result)
