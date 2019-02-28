@@ -71,7 +71,7 @@ class Ui_Dialog(object):
             self.textBrowser.insertPlainText("下注金额为空，请输入金额")
         cursor = self.textBrowser.textCursor()
         self.textBrowser.moveCursor(cursor.End)
-      
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # 创建一个QApplication，也就是你要开发的软件app
