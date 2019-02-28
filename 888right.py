@@ -3,20 +3,7 @@ import re
 import time
 
 
-def gameStart(token, numberndex, numberCounter, ):
-    url = "curl 'https://ipm-tw.pragmaticplay.net/gs2c/v3/gameService' -H 'Referer: " \
-          "https://ipm-tw.pragmaticplay.net/gs2c/html5Game.do?jackpotid=0&gname=888%20Dragons&extGame=1&ext=0&cb_target" \
-          "=exist_tab&symbol=vs1dragon8&jurisdictionID=99&mgckey=AUTHTOKEN" \
-          "@e6be865a65d3f713a33c5d67d3def97b21e403ba5c0565dd1263381acabce051~stylename@biggaming~SESSION@d3b1a3c3-b21e" \
-          "-4f0e-8302-b3cd37ea5153&tabName=' -H 'Origin: https://ipm-tw.pragmaticplay.net' -H 'User-Agent: " \
-          "Mozilla/5.0 (" \
-          "Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 " \
-          "Safari/537.36' " \
-          "-H 'Content-type: application/x-www-form-urlencoded' --data " \
-          "'action=doInit&symbol=vs1dragon8&cver=36308&index=1&counter=1&repeat=0&mgckey=AUTHTOKEN" \
-          "@e6be865a65d3f713a33c5d67d3def97b21e403ba5c0565dd1263381acabce051~stylename@biggaming~SESSION@d3b1a3c3-b21e" \
-          "-4f0e-8302-b3cd37ea5153' --compressed "
-
+def gameStart(url):
     indexNumber = int(url.split("&index=")[1].split("&counter=")[0]) + 1
     counter = int(url.split("&counter=")[1].split("&repeat=")[0]) + 2
 

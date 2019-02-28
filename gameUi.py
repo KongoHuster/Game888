@@ -49,6 +49,7 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.pushButton.setText(_translate("Dialog", "开始"))
+        self.pushButton.clicked.connect(lambda:self.startPlay())
         self.label.setText(_translate("Dialog", "余额"))
         self.label_2.setText(_translate("Dialog", "0"))
         self.label_3.setText(_translate("Dialog", "流水"))
@@ -61,6 +62,14 @@ class Ui_Dialog(object):
                                            "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">1</p></body></html>"))
         self.label_5.setText(_translate("Dialog", "下注"))
 
+    def startPlay(self):
+        if self.textEdit.toPlainText() is None:
+            self.textBrowser.append("第一行为空，请添加curl")
+
+        if self.textEdit_2.toPlainText() is None:
+            self.textBrowser.append("下注金额为空，请输入金额")
+
+        print("hhhh")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # 创建一个QApplication，也就是你要开发的软件app
