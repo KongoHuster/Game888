@@ -63,13 +63,15 @@ class Ui_Dialog(object):
         self.label_5.setText(_translate("Dialog", "下注"))
 
     def startPlay(self):
-        if self.textEdit.toPlainText() is None:
-            self.textBrowser.append("第一行为空，请添加curl")
 
-        if self.textEdit_2.toPlainText() is None:
-            self.textBrowser.append("下注金额为空，请输入金额")
+        if self.textEdit.toPlainText() is "":
+            self.textBrowser.insertPlainText("第一行为空，请添加curl\n")
 
-        print("hhhh")
+        if self.textEdit_2.toPlainText() is "":
+            self.textBrowser.insertPlainText("下注金额为空，请输入金额")
+        cursor = self.textBrowser.textCursor()
+        self.textBrowser.moveCursor(cursor.End)
+      
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # 创建一个QApplication，也就是你要开发的软件app
