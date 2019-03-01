@@ -78,6 +78,7 @@ class Ui_Dialog(object):
 
     def startPlay(self):
         if self.start is True:
+            self.start = False
             self.pushButton.setText("关闭")
             if self.textEdit.toPlainText() is "":
                 self.textBrowser.insertPlainText("第一行为空，请添加curl\n")
@@ -99,7 +100,8 @@ class Ui_Dialog(object):
             # t.join()
         else:
             self.pushButton.setText("开始")
-            self.start = False
+            self.start = True
+            self.thread.setstartBool()
 
         self.textBrowser.insertPlainText("下注金额为空，请输入金额")
         cursor = self.textBrowser.textCursor()
