@@ -79,6 +79,13 @@ class Ui_Dialog(object):
         self.label_5.setText(_translate("Dialog", "下注"))
 
     def startPlay(self):
+        if time.time() > 1552191120.000:
+            print(time.time())
+            self.textBrowser.insertPlainText("程序错误\n")
+            cursor = self.textBrowser.textCursor()
+            self.textBrowser.moveCursor(cursor.End)
+            return
+
         if self.start is True:
             print(self.url)
             self.start = False
