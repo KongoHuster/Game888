@@ -108,7 +108,6 @@ class Ui_Dialog(object):
             self.gameBool = False
             self.firstTime = False
 
-
     def gameStart(self):
         try:
             print(self.url)
@@ -119,9 +118,8 @@ class Ui_Dialog(object):
             pattern = re.compile(r'\d+')
 
             while self.gameBool:
-                data = '\'action=doSpin&symbol=vs1dragon8&c=0.2&l=1&index=' + str(self.indexNumber) + '&counter=' + str(
-                    self.counter) + "&repeat=0" \
-                       + "&mgckey" + self.url.split("&mgckey")[-1]
+                data = '\'action=doSpin&symbol=vs1dragon8&c=' + self.textEdit_2.text() + '&l=1&index=' + str(self.indexNumber) \
+                       + '&counter=' + str(self.counter) + "&repeat=0" + "&mgckey" + self.url.split("&mgckey")[-1]
                 sendUrl = head + data
                 self.url = sendUrl
                 print("发送" + sendUrl)
