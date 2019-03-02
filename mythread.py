@@ -25,6 +25,12 @@ bet = ""
 
 class Ui_Dialog(object):
     start = True
+    gameBool = True
+    indexNumber = 0
+    counter = 0
+    url = ""
+
+    firstTime = True
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -74,8 +80,9 @@ class Ui_Dialog(object):
 
     def startPlay(self):
         if self.start is True:
-            printQueue = Queue(maxsize=1000)
+            print(self.url)
             self.start = False
+            self.gameBool = True
             self.pushButton.setText("关闭")
             if self.textEdit.text() is "":
                 self.textBrowser.insertPlainText("第一行为空，请添加curl\n")
@@ -89,59 +96,45 @@ class Ui_Dialog(object):
                 self.textBrowser.moveCursor(cursor.End)
                 return
 
-            url = self.textEdit.text()
-            # print(url)
-            # if before = url.split("&c=")[0] is "":
-            #     before = url.split("&c=")[0]
-            #
-            # after = url.split("&l=1")[1]
-            # print(before)
-            # print(after)
-            # urlInput = before + "&c=" + self.textEdit_2.text() + after
-            # self.thread = self.MyThread(url, printQueue)
-            # self.thread.start()
-            # printThread = threading.Thread(target=self.textBrowserPrint, args=(printQueue,))
-            # printThread.start()
+            if self.firstTime:
+                self.url = self.textEdit.text()
 
-            printThread = threading.Thread(target=self.gameStart, args=(url,))
+            printThread = threading.Thread(target=self.gameStart)
             printThread.start()
-            # self.thread._signal.connect(self.callbacklog)
 
-            # try:
-            # t = threading.Thread(target=self.printHH(),  args=(20,), daemon=True)
-            # t.start()
-            # t.join()
         else:
             self.pushButton.setText("开始")
             self.start = True
-            # self.thread.setstartBool()
+            self.gameBool = False
+            self.firstTime = False
 
-        self.textBrowser.insertPlainText("下注金额为空，请输入金额\n")
-        cursor = self.textBrowser.textCursor()
-        self.textBrowser.moveCursor(cursor.End)
 
-    def gameStart(self, url):
+    def gameStart(self):
         try:
-            print(url)
-            indexNumber = int(url.split("&index=")[1].split("&counter=")[0]) + 1
-            counter = int(url.split("&counter=")[1].split("&repeat=")[0]) + 2
+            print(self.url)
+            self.indexNumber = int(self.url.split("&index=")[1].split("&counter=")[0]) + 1
+            self.counter = int(self.url.split("&counter=")[1].split("&repeat=")[0]) + 2
 
-            head = "curl" + url.split("curl")[1].split("--data")[0] + "--data "
-
+            head = "curl" + self.url.split("curl")[1].split("--data")[0] + "--data "
             pattern = re.compile(r'\d+')
 
-            while True:
-                data = '\'action=doSpin&symbol=vs1dragon8&c=1&l=1&index=' + str(indexNumber) + '&counter=' + str(
-                    counter) + "&repeat=0" \
-                       + "&mgckey" + url.split("&mgckey")[-1]
+            while self.gameBool:
+                data = '\'action=doSpin&symbol=vs1dragon8&c=0.2&l=1&index=' + str(self.indexNumber) + '&counter=' + str(
+                    self.counter) + "&repeat=0" \
+                       + "&mgckey" + self.url.split("&mgckey")[-1]
                 sendUrl = head + data
+                self.url = sendUrl
+                print("发送" + sendUrl)
                 result = os.popen(sendUrl).readlines()
 
+                if result[0].startswith("undefined"):
+                    pass
+
                 if result[0].startswith("nomoney="):
-                    print("没钱了，请充值")
-                    # self.textBrowser.insertPlainText("没钱了，请充值")
-                    # cursor = self.textBrowser.textCursor()
-                    # self.textBrowser.moveCursor(cursor.End)
+                    print("没钱了，请充值\n")
+                    self.textBrowser.insertPlainText("没钱了，请充值")
+                    cursor = self.textBrowser.textCursor()
+                    self.textBrowser.moveCursor(cursor.End)
                     break
 
                 if result == ['unlogged']:
@@ -163,34 +156,36 @@ class Ui_Dialog(object):
 
                 number = pattern.findall(result[0])
                 if int(number[0]) == 0:
-                    print("没中奖")
-                    self.textBrowser.insertPlainText("没中奖")
+                    print("没中奖\n")
+                    self.textBrowser.insertPlainText("没中奖\n")
                     cursor = self.textBrowser.textCursor()
                     self.textBrowser.moveCursor(cursor.End)
-                    indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
-                    counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
-                    # self._signal.emit(indexNumber, counter)
-                    self.queue.put(indexNumber)
+
+                    self.label_2.setText(result[0].split("&balance=")[1].split("&index=")[0])
+                    self.label_4.setText(str(self.indexNumber))
+
+                    self.indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
+                    self.counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
                     time.sleep(0.005)
                 else:
-                    print("中奖了")
-                    indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
-                    counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
-                    data = '\'symbol=vs1dragon8&action=doCollect&index=' + str(indexNumber) + '&counter=' + str(
-                        counter) + "&repeat=0" \
-                           + '&mgckey' + url.split("&mgckey")[-1]
-                    sendUrl = head + data
-                    result = os.popen(sendUrl).readlines()
-                    print(result)
-                    self.textBrowser.insertPlainText("中奖了")
-                    self.textBrowser.insertPlainText(result)
+                    print("中奖了\n")
+                    self.textBrowser.insertPlainText("中奖了:" + result[0].split("tw=")[1].split("&balance=")[0] + "\n")
                     cursor = self.textBrowser.textCursor()
                     self.textBrowser.moveCursor(cursor.End)
-                    indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
-                    counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
+                    self.indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
+                    self.counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
+                    data = '\'symbol=vs1dragon8&action=doCollect&index=' + str(self.indexNumber) + '&counter=' + str(
+                        self.counter) + "&repeat=0" \
+                           + '&mgckey' + self.url.split("&mgckey")[-1]
+                    sendUrl = head + data
+                    self.url = sendUrl
+                    print("发送" + sendUrl)
+                    result = os.popen(sendUrl).readlines()
+
+                    self.indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
+                    self.counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
         except:
             self.textBrowser.insertPlainText("url错误，请重新粘贴")
-            self.textBrowser.insertPlainText(result)
             cursor = self.textBrowser.textCursor()
             self.textBrowser.moveCursor(cursor.End)
             print("url错误，请重新粘贴")
