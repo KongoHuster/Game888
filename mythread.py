@@ -7,14 +7,12 @@
 # WARNING! All changes made in this file will be lost!
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWidgets
 import sys
 from PyQt5 import QtCore
-from PyQt5.QtCore import pyqtSignal
 import re
 import os
 import time
-from queue import Queue
 import threading
 
 indexNumber = ""
@@ -29,11 +27,12 @@ class Ui_Dialog(object):
     indexNumber = 0
     counter = 0
     url = ""
+    backMoney = 0
 
     firstTime = True
 
     def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
+        Dialog.setObjectName("888龙")
         Dialog.resize(400, 300)
         self.textEdit = QtWidgets.QLineEdit(Dialog)
         self.textEdit.setGeometry(QtCore.QRect(10, 10, 361, 31))
@@ -75,7 +74,7 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "0"))
         self.label_3.setText(_translate("Dialog", "流水"))
         self.label_4.setText(_translate("Dialog", "0"))
-        self.textEdit_2.setText(_translate("Dialog", "0.2"))
+        self.textEdit_2.setText(_translate("Dialog", "2"))
         self.label_5.setText(_translate("Dialog", "下注"))
 
     def startPlay(self):
@@ -131,6 +130,7 @@ class Ui_Dialog(object):
                 self.url = sendUrl
                 print("发送" + sendUrl)
                 result = os.popen(sendUrl).readlines()
+                self.backMoney = self.backMoney + float(self.textEdit_2.text())
 
                 if result[0].startswith("undefined"):
                     pass
@@ -167,11 +167,11 @@ class Ui_Dialog(object):
                     self.textBrowser.moveCursor(cursor.End)
 
                     self.label_2.setText(result[0].split("&balance=")[1].split("&index=")[0])
-                    self.label_4.setText(str(self.indexNumber))
+                    self.label_4.setText(str(self.backMoney))
 
                     self.indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
                     self.counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
-                    time.sleep(0.005)
+                    time.sleep(0.1)
                 else:
                     print("中奖了\n")
                     self.textBrowser.insertPlainText("中奖了:" + result[0].split("tw=")[1].split("&balance=")[0] + "\n")
@@ -186,7 +186,7 @@ class Ui_Dialog(object):
                     self.url = sendUrl
                     print("发送" + sendUrl)
                     result = os.popen(sendUrl).readlines()
-
+                    self.backMoney = self.backMoney + float(self.textEdit_2.text())
                     self.indexNumber = int(result[0].split("&index=")[1].split("&balance_cash=")[0]) + 1
                     self.counter = int(result[0].split("&counter=")[1].split("&l=")[0]) + 2
         except:
